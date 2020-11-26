@@ -1,0 +1,3 @@
+C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/CMakeFiles/diffur_ded.dir
+C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/CMakeFiles/rebuild_cache.dir

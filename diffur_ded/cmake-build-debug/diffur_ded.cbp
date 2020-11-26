@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="diffur_ded"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/minGwlast/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="C:/minGwlast/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/minGwlast/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/minGwlast/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="diffur_ded">
+				<Option output="C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/diffur_ded.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="c:\mingwlast\mingw\bin\../lib/gcc/x86_64-w64-mingw32/9.2.0/../../../../include/c++/9.2.0"/>
+					<Add directory="c:\mingwlast\mingw\bin\../lib/gcc/x86_64-w64-mingw32/9.2.0/../../../../include/c++/9.2.0/x86_64-w64-mingw32"/>
+					<Add directory="c:\mingwlast\mingw\bin\../lib/gcc/x86_64-w64-mingw32/9.2.0/../../../../include/c++/9.2.0/backward"/>
+					<Add directory="c:\mingwlast\mingw\bin\../lib/gcc/x86_64-w64-mingw32/9.2.0/include"/>
+					<Add directory="c:\mingwlast\mingw\bin\../lib/gcc/x86_64-w64-mingw32/9.2.0/include-fixed"/>
+					<Add directory="c:\mingwlast\mingw\bin\../lib/gcc/x86_64-w64-mingw32/9.2.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/minGwlast/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Makefile&quot;  VERBOSE=1 diffur_ded"/>
+					<CompileFile command="C:/minGwlast/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/minGwlast/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/minGwlast/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="diffur_ded/fast">
+				<Option output="C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/diffur_ded.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="c:\mingwlast\mingw\bin\../lib/gcc/x86_64-w64-mingw32/9.2.0/../../../../include/c++/9.2.0"/>
+					<Add directory="c:\mingwlast\mingw\bin\../lib/gcc/x86_64-w64-mingw32/9.2.0/../../../../include/c++/9.2.0/x86_64-w64-mingw32"/>
+					<Add directory="c:\mingwlast\mingw\bin\../lib/gcc/x86_64-w64-mingw32/9.2.0/../../../../include/c++/9.2.0/backward"/>
+					<Add directory="c:\mingwlast\mingw\bin\../lib/gcc/x86_64-w64-mingw32/9.2.0/include"/>
+					<Add directory="c:\mingwlast\mingw\bin\../lib/gcc/x86_64-w64-mingw32/9.2.0/include-fixed"/>
+					<Add directory="c:\mingwlast\mingw\bin\../lib/gcc/x86_64-w64-mingw32/9.2.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/minGwlast/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Makefile&quot;  VERBOSE=1 diffur_ded/fast"/>
+					<CompileFile command="C:/minGwlast/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/minGwlast/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/minGwlast/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/minGwlast/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="C:/minGwlast/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/minGwlast/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/minGwlast/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/minGwlast/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="C:/minGwlast/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/minGwlast/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/minGwlast/MinGW/bin/mingw32-make.exe -f &quot;C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Diffur.cpp">
+			<Option target="diffur_ded"/>
+		</Unit>
+		<Unit filename="C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Diffur.h">
+			<Option target="diffur_ded"/>
+		</Unit>
+		<Unit filename="C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/IsE_Tree.cpp">
+			<Option target="diffur_ded"/>
+		</Unit>
+		<Unit filename="C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/IsE_Tree.h">
+			<Option target="diffur_ded"/>
+		</Unit>
+		<Unit filename="C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/IsE_text.cpp">
+			<Option target="diffur_ded"/>
+		</Unit>
+		<Unit filename="C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/IsE_text.h">
+			<Option target="diffur_ded"/>
+		</Unit>
+		<Unit filename="C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Numeric_Tree.cpp">
+			<Option target="diffur_ded"/>
+		</Unit>
+		<Unit filename="C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Numeric_Tree.h">
+			<Option target="diffur_ded"/>
+		</Unit>
+		<Unit filename="C:/Users/egolg/CLionProjects/diffur_ded/main.cpp">
+			<Option target="diffur_ded"/>
+		</Unit>
+		<Unit filename="C:/Users/egolg/CLionProjects/diffur_ded/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

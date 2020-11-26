@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/IsE_Tree.h
+cstdio
+-
+cstdlib
+-
+cassert
+-
+cstring
+-
+cmath
+-
+
+C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Numeric_Tree.cpp
+windef.h
+-
+Numeric_Tree.h
+C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Numeric_Tree.h
+
+C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Numeric_Tree.h
+IsE_Tree.h
+C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/IsE_Tree.h
+string.h
+C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/string.h
+

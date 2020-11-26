@@ -1,0 +1,6 @@
+digraph LIST{
+	rankdir = TB;
+"0000000000a81550"[shape=record, color="blue4",style="filled",fillcolor="aquamarine",label="   { parent = 0000000000000000 | current =  0000000000a81550 | left = 0000000000a81590 | right = 0000000000a815d0 | value = * | tree = 000000000068fd80 | type = OPERATION} "];"0000000000a815d0"[shape=record, color="blue4",style="filled",fillcolor="aquamarine",label="   { parent = 0000000000a81550 | current =  0000000000a815d0 | left = 0000000000000000 | right = 0000000000a81610 | value = s | tree = 000000000068fd80 | type = OPERATION} "];"0000000000a81610"[shape=record, color="green4",style="filled",fillcolor="green1",label="   { parent = 0000000000a815d0 | current =  0000000000a81610 | left = 0000000000000000 | right = 0000000000000000 | value =  | tree = 000000000068fd80 | type = VARIABLE} "];"0000000000a81590"[shape=record, color="green4",style="filled",fillcolor="green1",label="   { parent = 0000000000a81550 | current =  0000000000a81590 | left = 0000000000000000 | right = 0000000000000000 | value =  | tree = 000000000068fd80 | type = CONSTANT} "];"0000000000a81550" -> "0000000000a81590"[label="left"];
+"0000000000a81550" -> "0000000000a815d0"[label="right"];
+"0000000000a815d0" -> "0000000000a81610"[label="right"];
+}
