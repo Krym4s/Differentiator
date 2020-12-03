@@ -6,6 +6,16 @@
 
 #IncludeRegexTransform: 
 
+C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Diffur.cpp
+Diffur.h
+C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Diffur.h
+
+C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Diffur.h
+Numeric_Tree.h
+C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Numeric_Tree.h
+IsE_text.h
+C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/IsE_text.h
+
 C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/IsE_Tree.h
 cstdio
 -
@@ -18,11 +28,19 @@ cstring
 cmath
 -
 
-C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Numeric_Tree.cpp
-windef.h
+C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/IsE_text.h
+stdio.h
 -
-Numeric_Tree.h
-C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Numeric_Tree.h
+stdlib.h
+-
+assert.h
+-
+string.h
+-
+sys/stat.h
+-
+ctype.h
+-
 
 C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Numeric_Tree.h
 IsE_Tree.h

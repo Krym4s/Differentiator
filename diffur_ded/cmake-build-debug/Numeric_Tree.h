@@ -35,6 +35,17 @@ enum Commands
     CH = 'u',
     TH = '2',
     CTH = '3',
+    ARCSIN = '4',
+    ARCCOS = '5',
+    ARCTG = '6',
+    ARCCTG = '7',
+    SQRT = '8'
+};
+
+enum PhraseType
+{
+    DIFFERENTIATE_TYPE,
+    SIMPLIFY_TYPE,
 };
 
 struct NumericTree;
@@ -45,7 +56,6 @@ struct NumericNode
     MemberValue memberValue;
     NumericNode* leftChild;
     NumericNode* rightChild;
-    NumericNode* parent;
     NumericTree* tree;
 };
 
@@ -56,11 +66,14 @@ struct NumericTree
     unsigned int size;
     char* graph_logs_name;
     int variables[26];
+    FILE* LaTeX_Output;
 };
 
-TreeError NumericTreeConstruct (NumericTree* thou, char* graph_logs);
+TreeError NumericTreeConstruct (NumericTree* thou, char* graph_logs, char* LaTeX_Output_name);
 
-void NumericNodeConstruct (NumericNode* thou, NumericNode* right, NumericNode* left, NumericNode* parent, MemberValue value, NodeType Type, NumericTree* tree);
+NumericNode* NumericNodeConstruct (NumericNode* thou, NumericNode* left, NumericNode* right, MemberValue value, NodeType Type, NumericTree* tree);
+
+NumericNode* CreateNewNode (NumericNode* left, NumericNode* right, MemberValue value, NodeType Type, NumericTree* tree);
 
 NumericNode* NumericAddRightChild (NumericNode* thou, MemberValue value, NodeType type);
 
@@ -83,5 +96,9 @@ void NumericDrawVertex (FILE* graph_logs, NumericNode* thou);
 void NumericDeclareVertex (FILE* graph_logs, NumericNode* thou);
 
 char* typeName (NodeType type);
+
+NumericNode* FindParent (NumericNode* current);
+
+NumericNode* DFSSearch (NumericNode* sought, NumericNode* current);
 
 #endif //DIFFUR_DED_NUMERIC_TREE_H

@@ -44,6 +44,7 @@ enum TreeError
     NOT_A_LEAF = 7,
     WRONG_TYPE = -2,
     NO_VALUE = -3,
+    NO_TREE_FREE_MEMORY = 8,
 };
 
 TreeError TreeConstruct (struct Tree* thou, char* graph_logs);

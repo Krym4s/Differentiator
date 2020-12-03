@@ -15,7 +15,7 @@
 #define ASSERTEDTREEMEMBER !NumericTreeVerify (thou->tree) || NumericGraphicDump (thou->tree);
 #endif
 
-TreeError NumericTreeConstruct (NumericTree* thou, char* graph_logs)
+TreeError NumericTreeConstruct (NumericTree* thou, char* graph_logs, char* LaTeX_Output_Name)
 {
     assert (thou);
     thou->size = 0;
@@ -24,17 +24,36 @@ TreeError NumericTreeConstruct (NumericTree* thou, char* graph_logs)
     for (int i = 0 ; i < 26; i++)
         thou->variables[i] = 0;
 
+    thou->LaTeX_Output = fopen (LaTeX_Output_Name, "w");
+    if (!thou->LaTeX_Output)
+        return NO_TREE_FREE_MEMORY;
+
     return NO_TREE_ERRORS;
 }
 
-void NumericNodeConstruct (NumericNode* thou, NumericNode* right, NumericNode* left, NumericNode* parent, MemberValue value, NodeType type, NumericTree* tree)
+NumericNode* NumericNodeConstruct (NumericNode* thou, NumericNode* left, NumericNode* right, MemberValue value, NodeType type, NumericTree* tree)
 {
     thou->tree = tree;
     thou->type = type;
     thou->leftChild = left;
     thou->rightChild = right;
-    thou->parent = parent;
     thou->memberValue = value;
+    return thou;
+}
+
+NumericNode* CreateNewNode (NumericNode* left, NumericNode* right, MemberValue value, NodeType type, NumericTree* tree)
+{
+    NumericNode* thou = (NumericNode*) calloc (1, sizeof(*thou));
+    if (!thou)
+        return nullptr;
+
+    thou->tree = tree;
+    thou->type = type;
+    thou->leftChild = left;
+    thou->rightChild = right;
+    thou->memberValue = value;
+    thou->tree->size++;
+    return thou;
 }
 
 NumericNode* NumericAddRightChild (NumericNode* thou, MemberValue value, NodeType type)
@@ -50,7 +69,6 @@ NumericNode* NumericAddRightChild (NumericNode* thou, MemberValue value, NodeTyp
 
     thou->tree->size++;
     thou->rightChild->tree = thou->tree;
-    thou->rightChild->parent = thou;
     thou->rightChild->rightChild = NULL;
     thou->rightChild->leftChild = NULL;
     thou->rightChild->memberValue = value;
@@ -72,7 +90,6 @@ NumericNode* NumericAddLeftChild (NumericNode* thou, MemberValue value, NodeType
 
     thou->tree->size++;
     thou->leftChild->tree = thou->tree;
-    thou->leftChild->parent = thou;
     thou->leftChild->rightChild = NULL;
     thou->leftChild->leftChild = NULL;
     thou->leftChild->memberValue = value;
@@ -86,7 +103,8 @@ TreeError NumericDestructTree (NumericTree* thou)
     assert (thou);
     ASSERTEDTREE
     NumericDestructTreeMember (thou->root);
-    free (thou);
+    if (thou)
+        free (thou);
     return NO_TREE_ERRORS;
 }
 
@@ -94,12 +112,11 @@ TreeError NumericDestructTreeMember (NumericNode* thou)
 {
     if (thou)
     {
-        NumericDestructTreeMember (thou->leftChild);
         NumericDestructTreeMember (thou->rightChild);
-        thou->rightChild = NULL;
-        thou->leftChild  = NULL;
-        thou->parent     = NULL;
-        thou->tree       = NULL;
+        NumericDestructTreeMember (thou->leftChild);
+        thou->rightChild = nullptr;
+        thou->leftChild  = nullptr;
+        thou->tree       = nullptr;
         thou->type = IMAGINATIVE;
         free (thou);
     }
@@ -129,7 +146,7 @@ int NumericDFSVerify (NumericNode* vertex)
 
     if (vertex->rightChild)
     {
-        if (vertex != vertex->rightChild->parent || vertex->tree != vertex->rightChild->tree)
+        if (vertex->tree != vertex->rightChild->tree)
             return LOST_PARENT;
 
         if (vertex->type != OPERATION)
@@ -139,7 +156,7 @@ int NumericDFSVerify (NumericNode* vertex)
     }
     if (vertex->leftChild)
     {
-        if (vertex != vertex->leftChild->parent || vertex->tree != vertex->leftChild->tree)
+        if (vertex->tree != vertex->leftChild->tree)
             return LOST_PARENT;
 
         nLeftVertexes = NumericDFSVerify (vertex->leftChild);
@@ -166,10 +183,6 @@ TreeError NumericDeleteVertex (TreeMember* thou)
         return NOT_A_LEAF;
 
     thou->tree->size--;
-    if (thou->parent->rightChild == thou)
-        thou->parent->rightChild = NULL;
-    else
-        thou->parent->leftChild = NULL;
 
     return DestructTreeMember (thou);
 }
@@ -228,8 +241,16 @@ void NumericDeclareVertex (FILE* graph_logs, NumericNode* current)
     else
         fprintf (graph_logs, "\"green4\",style=\"filled\",fillcolor=\"green1\"");
 
-    fprintf (graph_logs, ",label=\"   { parent = %p | current =  %p | left = %p | right = %p | value = %c | tree = %p | type = %s} \"];",
-             current->parent, current, current->leftChild, current->rightChild, (int)current->memberValue, current->tree, typeName (current->type));
+    fprintf (graph_logs, ",label=\"   { current =  %p | left = %p | right = %p | tree = %p | type = %s | value = ",
+             current, current->leftChild, current->rightChild, current->tree, typeName (current->type));
+    switch (current->type)
+    {
+        case VARIABLE: fprintf (graph_logs, "%c", (char) current->memberValue + 'a'); break;
+        case CONSTANT: fprintf (graph_logs, "%lg", current->memberValue); break;
+        case OPERATION: fprintf (graph_logs, "%c", (char) current->memberValue); break;
+    }
+    fprintf (graph_logs, "} \"];");
+
 
     NumericDeclareVertex (graph_logs, current->rightChild);
     NumericDeclareVertex (graph_logs, current->leftChild);
@@ -246,6 +267,26 @@ char* typeName (NodeType type)
         default:
             return "NO_TYPE";
     }
+}
+
+NumericNode* FindParent (NumericNode* current)
+{
+    return DFSSearch (current, current->tree->root);
+}
+
+NumericNode* DFSSearch (NumericNode* sought, NumericNode* current)
+{
+    if (!current)
+        return nullptr;
+
+    if (current->leftChild == sought || current->rightChild == sought)
+        return current;
+
+    NumericNode* tempPointer = DFSSearch (sought, current->rightChild);
+    if (!tempPointer)
+        return DFSSearch (sought, current->leftChild);
+
+    return tempPointer;
 }
 #undef ARGNAME
 #undef ASSERTEDTREE

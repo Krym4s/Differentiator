@@ -117,17 +117,14 @@ TreeError TreeVerify (Tree* tree)
     int nVertexes = DFSVerify (tree->root);
     if (nVertexes == LOST_PARENT)
     {
-        printf ("aaaaaaaaaa\n");
         return LOST_PARENT;
     }
 
 
     if (tree->size != nVertexes)
     {
-        printf ("po pizde %d %d\n", nVertexes, tree->size);
         return BAD_TREE_SIZE;
     }
-    printf ("\n\n");
     return NO_TREE_ERRORS;
 }
 
