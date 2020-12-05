@@ -19,27 +19,9 @@ enum NodeType
 
 enum Commands
 {
-    ADD = '+',
-    SUBTRACTION = '-',
-    DIVISION = '/',
-    MULTIPLICATION = '*',
-    SIN = 's',
-    COS = 'c',
-    POWER = '^',
-    LOG = 'o',
-    LG = 'g',
-    LN = 'n',
-    TAN = 't',
-    CTAN = '1',
-    SH = 'h',
-    CH = 'u',
-    TH = '2',
-    CTH = '3',
-    ARCSIN = '4',
-    ARCCOS = '5',
-    ARCTG = '6',
-    ARCCTG = '7',
-    SQRT = '8'
+#define MATH_OPERATION(operationName, operationCode, operationPrintName, diffFunction, printFunction) operationName = operationCode,
+#include "operation.txt"
+#undef MATH_OPERATION
 };
 
 enum PhraseType

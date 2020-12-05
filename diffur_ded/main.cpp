@@ -11,6 +11,8 @@ int main()
     printf ("%lg",c);*/
 
     NumericTree tree = {};
+    Vocabulary vocabulary = {};
+    VocabularyConstruct (&vocabulary, "diff_phrases.txt", "simp_phrases.txt");
     char* fileName = "Num_Logs.dot";
     char* fileDiffName = "New_Tree.dot";
     NumericTreeConstruct (&tree, fileName, "diffur.tex");
@@ -21,25 +23,26 @@ int main()
     NumericTreeConstruct (&diffTree, fileDiffName, "diffur.tex");
     diffTree.root = DifferentiateSubTree (tree.root, &diffTree);
     printf ("%c\n", (char)diffTree.root->leftChild->rightChild->memberValue + '0');
+    
     //NumericGraphicDump (&diffTree);
     PrepareLatexDocument (&diffTree);
     SubTreeLaTeXOutput (diffTree.root, DIFFERENTIATE_TYPE);
     SimplifyFunction (&diffTree);
     SubTreeLaTeXOutput (diffTree.root, DIFFERENTIATE_TYPE);
-    NumericTree d2 = {};
-    NumericTree d3 = {};
+    //NumericTree d2 = {};
+    //NumericTree d3 = {};
     //NumericTree d4 = {};
     //NumericTree d5 = {};
-    NumericTreeConstruct(&d2, fileDiffName, "diffur.tex");
-    NumericTreeConstruct(&d3, fileDiffName, "diffur.tex");
+    //NumericTreeConstruct(&d2, fileDiffName, "diffur.tex");
+    //NumericTreeConstruct(&d3, fileDiffName, "diffur.tex");
     //NumericTreeConstruct(&d4, fileDiffName, "diffur.tex");
     //NumericTreeConstruct(&d5, fileDiffName, "diffur.tex");
-    d2.root = DifferentiateSubTree (diffTree.root, &d2);
-    SimplifyFunction (&d2);
-    SubTreeLaTeXOutput (d2.root, DIFFERENTIATE_TYPE);
-    d3.root = DifferentiateSubTree (d2.root, &d3);
-    SimplifyFunction (&d3);
-    SubTreeLaTeXOutput (d3.root, DIFFERENTIATE_TYPE);
+    //d2.root = DifferentiateSubTree (diffTree.root, &d2);
+    //SimplifyFunction (&d2);
+    //SubTreeLaTeXOutput (d2.root, DIFFERENTIATE_TYPE);
+    //d3.root = DifferentiateSubTree (d2.root, &d3);
+    //SimplifyFunction (&d3);
+    //SubTreeLaTeXOutput (d3.root, DIFFERENTIATE_TYPE);
     //d4.root = DifferentiateSubTree (d3.root, &d4);
     //SimplifyFunction (&d4);
     //SubTreeLaTeXOutput (d4.root, DIFFERENTIATE_TYPE);

@@ -6,6 +6,7 @@ CMakeFiles/diffur_ded.dir/Diffur.cpp.obj: Diffur.h
 CMakeFiles/diffur_ded.dir/Diffur.cpp.obj: IsE_Tree.h
 CMakeFiles/diffur_ded.dir/Diffur.cpp.obj: IsE_text.h
 CMakeFiles/diffur_ded.dir/Diffur.cpp.obj: Numeric_Tree.h
+CMakeFiles/diffur_ded.dir/Diffur.cpp.obj: operation.txt
 
 CMakeFiles/diffur_ded.dir/IsE_Tree.cpp.obj: IsE_Tree.cpp
 CMakeFiles/diffur_ded.dir/IsE_Tree.cpp.obj: IsE_Tree.h
@@ -16,10 +17,12 @@ CMakeFiles/diffur_ded.dir/IsE_text.cpp.obj: IsE_text.h
 CMakeFiles/diffur_ded.dir/Numeric_Tree.cpp.obj: IsE_Tree.h
 CMakeFiles/diffur_ded.dir/Numeric_Tree.cpp.obj: Numeric_Tree.cpp
 CMakeFiles/diffur_ded.dir/Numeric_Tree.cpp.obj: Numeric_Tree.h
+CMakeFiles/diffur_ded.dir/Numeric_Tree.cpp.obj: operation.txt
 
 CMakeFiles/diffur_ded.dir/main.cpp.obj: Diffur.h
 CMakeFiles/diffur_ded.dir/main.cpp.obj: IsE_Tree.h
 CMakeFiles/diffur_ded.dir/main.cpp.obj: IsE_text.h
 CMakeFiles/diffur_ded.dir/main.cpp.obj: Numeric_Tree.h
+CMakeFiles/diffur_ded.dir/main.cpp.obj: operation.txt
 CMakeFiles/diffur_ded.dir/main.cpp.obj: ../main.cpp
 

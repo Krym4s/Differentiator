@@ -6,6 +6,31 @@
 
 const double EPSILON = 0.00001;
 
+int VocabularyConstruct (Vocabulary* vocabulary, char* diffFileName, char* simplifyFileName)
+{
+    char* diffBuffer = "";
+    char* simplifyBuffer = "";
+    String* diffLines = nullptr;
+    String* simplifyLines = nullptr;
+
+    readToStorage (diffFileName, &diffBuffer);
+    readToStorage (simplifyFileName, &simplifyBuffer);
+    deleteDoubleSymb (diffBuffer, '\n');
+    deleteDoubleSymb (simplifyBuffer, '\n');
+    vocabulary->nDiffLines = countSymb (diffBuffer, '\n');
+    vocabulary->nSimplifyLines = countSymb (simplifyBuffer, '\n');
+
+    splitTextIntoLines (diffBuffer, vocabulary->nDiffLines, &diffLines);
+    splitTextIntoLines (simplifyBuffer, vocabulary->nSimplifyLines, &simplifyLines);
+
+    vocabulary->diffBuff = diffBuffer;
+    vocabulary->simplifyBuff = simplifyBuffer;
+    vocabulary->diffLines = diffLines;
+    vocabulary->simplifyLines = simplifyLines;
+    return 0;
+
+}
+
 TreeError ReadDifferentiatorData (char* fileNameInput, NumericTree* tree)
 {
     assert (fileNameInput);
@@ -60,75 +85,16 @@ NumericNode* DifferentiatorDataInterpreter (char** beginOfExpression, NumericTre
 int CommandDeterminant (char** beginOfExpression, NumericNode* current)
 {
     char* endOfExpression = strpbrk (*beginOfExpression, "()");
-
     int commandSize = endOfExpression - *beginOfExpression;
 
     if (commandSize <= 0)
         return NO_VALUE;
 
-    if (strncmp("+", *beginOfExpression, commandSize) == 0)
-        return VertexCommandHandler (beginOfExpression, commandSize, current, ADD, OPERATION);
+#define MATH_OPERATION(operationName, operationCode, operationPrintName, diffFunction, printFunction) if (strncmp(operationPrintName,  *beginOfExpression, commandSize) == 0) \
+    return VertexCommandHandler (beginOfExpression, commandSize, current, operationName, OPERATION);
 
-    if (strncmp("-", *beginOfExpression, commandSize) == 0)
-        return VertexCommandHandler (beginOfExpression, commandSize, current, SUBTRACTION, OPERATION);
-
-    if (strncmp("/", *beginOfExpression, commandSize) == 0)
-        return VertexCommandHandler (beginOfExpression, commandSize, current, DIVISION, OPERATION);
-
-    if (strncmp("*", *beginOfExpression, commandSize) == 0)
-        return VertexCommandHandler (beginOfExpression, commandSize, current, MULTIPLICATION, OPERATION);
-
-    if (strncmp("^", *beginOfExpression, commandSize) == 0)
-        return VertexCommandHandler (beginOfExpression, commandSize, current, POWER, OPERATION);
-
-    if (strncmp("sin", *beginOfExpression, commandSize) == 0)
-
-        return VertexCommandHandler (beginOfExpression, commandSize, current, SIN, OPERATION);
-
-    if (strncmp("cos", *beginOfExpression, commandSize) == 0)
-        return VertexCommandHandler (beginOfExpression, commandSize, current, COS, OPERATION);
-
-    if (strncmp("log", *beginOfExpression, commandSize) == 0)
-        return VertexCommandHandler (beginOfExpression, commandSize, current, LOG, OPERATION);
-
-    if (strncmp("lg", *beginOfExpression, commandSize) == 0)
-        return VertexCommandHandler (beginOfExpression, commandSize, current, LG, OPERATION);
-
-    if (strncmp("ln", *beginOfExpression, commandSize) == 0)
-        return VertexCommandHandler (beginOfExpression, commandSize, current, LN, OPERATION);
-
-    if (strncmp("tg", *beginOfExpression, commandSize) == 0)
-        return VertexCommandHandler (beginOfExpression, commandSize, current, TAN, OPERATION);
-
-    if (strncmp("ctg", *beginOfExpression, commandSize) == 0)
-        return VertexCommandHandler (beginOfExpression, commandSize, current, CTAN, OPERATION);
-
-    if (strncmp("sh", *beginOfExpression, commandSize) == 0)
-        return VertexCommandHandler (beginOfExpression, commandSize, current, SH, OPERATION);
-
-    if (strncmp("ch", *beginOfExpression, commandSize) == 0)
-        return VertexCommandHandler (beginOfExpression, commandSize, current, CH, OPERATION);
-
-    if (strncmp("th", *beginOfExpression, commandSize) == 0)
-        return VertexCommandHandler (beginOfExpression, commandSize, current, TH, OPERATION);
-
-    if (strncmp("cth", *beginOfExpression, commandSize) == 0)
-        return VertexCommandHandler (beginOfExpression, commandSize, current, CTH, OPERATION);
-
-    if (strncmp("arcsin", *beginOfExpression, commandSize) == 0)
-        return VertexCommandHandler (beginOfExpression, commandSize, current, ARCSIN, OPERATION);
-
-    if (strncmp("arccos", *beginOfExpression, commandSize) == 0)
-        return VertexCommandHandler (beginOfExpression, commandSize, current, ARCCOS, OPERATION);
-
-    if (strncmp("arctg", *beginOfExpression, commandSize) == 0)
-        return VertexCommandHandler (beginOfExpression, commandSize, current, ARCTG, OPERATION);
-
-    if (strncmp("arcctg", *beginOfExpression, commandSize) == 0)
-        return VertexCommandHandler (beginOfExpression, commandSize, current, ARCCTG, OPERATION);
-
-    if (strncmp("sqrt", *beginOfExpression, commandSize) == 0)
-        return VertexCommandHandler (beginOfExpression, commandSize, current, SQRT, OPERATION);
+#include "operation.txt"
+#undef MATH_OPERATION
 
     if (isalpha(**beginOfExpression))
         return VertexCommandHandler (beginOfExpression, commandSize, current, **beginOfExpression - 'a', VARIABLE);
@@ -184,91 +150,16 @@ NumericNode* CopyNode (NumericNode* oldNode, NumericTree* newTree)
     return newNode;
 }
 
-#define dL DifferentiateSubTree (subRoot->leftChild, diffTree)
-#define dR DifferentiateSubTree (subRoot->rightChild, diffTree)
-#define L CopyNode (subRoot->leftChild, diffTree)
-#define R CopyNode (subRoot->rightChild, diffTree)
-
-#define ADD_F(x,y) CreateNewNode (x, y, ADD, OPERATION, diffTree)
-#define SUBTRACTION_F(x,y) CreateNewNode (x, y, SUBTRACTION, OPERATION, diffTree)
-#define DIVISION_F(x,y) CreateNewNode (x, y, DIVISION, OPERATION, diffTree)
-#define MULTIPLICATION_F(x,y) CreateNewNode (x, y, MULTIPLICATION, OPERATION, diffTree)
-#define POWER_F(x,y) CreateNewNode (x, y, POWER, OPERATION, diffTree)
-#define SIN_F(x) CreateNewNode (nullptr, x, SIN, OPERATION, diffTree)
-#define COS_F(x) CreateNewNode (nullptr, x, COS, OPERATION, diffTree)
-#define LOG_F(x,y) CreateNewNode (x, y, LOG, OPERATION, diffTree)
-#define LN_F(x) CreateNewNode (nullptr, x, LN, OPERATION, diffTree)
-#define LG_F(x) CreateNewNode (nullptr, x, LG, OPERATION, diffTree)
-#define SH_F(x) CreateNewNode (nullptr, x, SH, OPERATION, diffTree)
-#define CH_F(x) CreateNewNode (nullptr, x, CH, OPERATION, diffTree)
-#define TH_F(x) CreateNewNode (nullptr, x, TH, OPERATION, diffTree)
-#define CTH_F(x) CreateNewNode (nullptr, x, CTH, OPERATION, diffTree)
-#define SQRT_F(x) CreateNewNode (nullptr, x, SQRT, OPERATION, diffTree)
-#define NEW_CONST(x) CreateNewNode (nullptr, nullptr, x, CONSTANT, diffTree)
-
 NumericNode* DifferentiateOperation (NumericNode* subRoot, NumericTree* diffTree)
 {
     switch ((Commands) subRoot->memberValue)
     {
-        case ADD:            return ADD_F (dL, dR);
-        case SUBTRACTION:    return SUBTRACTION_F (dL, dR);
-        case DIVISION:       return DIVISION_F (ADD_F (MULTIPLICATION_F (dL, R), MULTIPLICATION_F (L, dR)), POWER_F (R, NEW_CONST(2)));
-        case MULTIPLICATION: return ADD_F(MULTIPLICATION_F (dL, R), MULTIPLICATION_F (L, dR));
-        case SIN:            return MULTIPLICATION_F (COS_F (R), dR);
-        case COS:            return MULTIPLICATION_F (NEW_CONST(-1), MULTIPLICATION_F (SIN_F (R), dR));
-        case LG:             return DIVISION_F (DIVISION_F (dR, R), LN_F(NEW_CONST (10)));
-        case LOG:            return DIVISION_F (SUBTRACTION_F (MULTIPLICATION_F (DIVISION_F (LN_F (R), L), dL), MULTIPLICATION_F (DIVISION_F (LN_F (L), R), dR)), POWER_F (LN_F (R), NEW_CONST(2)));
-        case LN:             return DIVISION_F (dR, R);
-        case TAN:            return DIVISION_F (dR, POWER_F (COS_F (R), NEW_CONST (2)));
-        case CTAN:           return DIVISION_F (dR, MULTIPLICATION_F (NEW_CONST (-1), POWER_F (SIN_F (R), NEW_CONST (2))));
-        case SH:             return MULTIPLICATION_F (dR, CH_F (R));
-        case CH:             return MULTIPLICATION_F (dR, SH_F (R));
-        case TH:             return DIVISION_F (dR, POWER_F (CH_F (R), NEW_CONST(2)));
-        case CTH:            return DIVISION_F (MULTIPLICATION_F (NEW_CONST (-1), dR), POWER_F (SH_F (R), NEW_CONST(2)));
-        case ARCSIN:         return DIVISION_F (dR, SQRT_F(SUBTRACTION_F(NEW_CONST(1), POWER_F (R , NEW_CONST(2)))));
-        case ARCCOS:         return MULTIPLICATION_F(NEW_CONST (-1), DIVISION_F (dR, SQRT_F(SUBTRACTION_F(NEW_CONST(1), POWER_F (R , NEW_CONST(2))))));
-        case ARCTG:          return DIVISION_F (dR, ADD_F (NEW_CONST(1), POWER_F (R, NEW_CONST (2))));
-        case ARCCTG:         return MULTIPLICATION_F (NEW_CONST(-1), DIVISION_F (dR, ADD_F (NEW_CONST(1), POWER_F (R, NEW_CONST (2)))));
-        case SQRT:           return DIVISION_F (dR, MULTIPLICATION_F (NEW_CONST(2), SQRT_F (R)));
-        case POWER:
-            if (subRoot->leftChild->type == CONSTANT)
-            {
-                if (subRoot->rightChild->type == CONSTANT)
-                    return CreateNewNode (nullptr, nullptr, 0, CONSTANT, diffTree);
+#define MATH_OPERATION(operationName, operationCode, operationPrintName, diffFunction, printFunction) case operationName: diffFunction
+#include "operation.txt"
 
-                return MULTIPLICATION_F(MULTIPLICATION_F (POWER_F (L, R), LN_F (L)), dR);
-            }
-            else
-            {
-                if (subRoot->rightChild->type == CONSTANT)
-                    return MULTIPLICATION_F (NEW_CONST (subRoot->rightChild->memberValue), MULTIPLICATION_F (dL, POWER_F (L, NEW_CONST(subRoot->rightChild->memberValue - 1))));
-
-                return MULTIPLICATION_F (POWER_F (L, R), ADD_F (MULTIPLICATION_F (DIVISION_F(dL, L), R), MULTIPLICATION_F (LN_F (L), dR)));
-            }
+#undef MATH_OPERATION
     }
 }
-
-#undef L
-#undef R
-#undef dR
-#undef dL
-
-#undef ADD_F
-#undef SUBTRACTION_F
-#undef DIVISION_F
-#undef MULTIPLICATION_F
-#undef POWER_F
-#undef SIN_F
-#undef COS_F
-#undef LOG_F
-#undef LN_F
-#undef LG_F
-#undef SH_F
-#undef CH_F
-#undef TH_F
-#undef CTH_F
-#undef SQRT_F
-#undef NEW_CONST
 
 void PrepareLatexDocument (NumericTree* tree)
 {
@@ -305,9 +196,9 @@ void PrepareLatexDocument (NumericTree* tree)
 void SubTreeLaTeXOutput (NumericNode* root, PhraseType type)
 {
     //PrintGeniousPhrase (type);
-    fprintf (root->tree->LaTeX_Output, "$");
-    CurrentNodeLaTeXOutput (root, 0);
-    fprintf (root->tree->LaTeX_Output, "$\n\n");
+    fprintf (root->tree->LaTeX_Output, "$$");
+    CurrentNodeLaTeXOutput (root, false);
+    fprintf (root->tree->LaTeX_Output, "$$\n\n");
 }
 
 int NodePriority (NumericNode* upper, NumericNode* lower)
@@ -355,67 +246,10 @@ void CurrentOperationLaTeXOutput (NumericNode* current)
 {
     switch ((int)current->memberValue)
     {
-        case ADD:
-            CurrentNodeLaTeXOutput (current->leftChild, 0);
-            fprintf(current->tree->LaTeX_Output, "+");
-            CurrentNodeLaTeXOutput (current->rightChild, 0);
-            break;
-        case SUBTRACTION:
-            CurrentNodeLaTeXOutput (current->leftChild, 0);
-            fprintf(current->tree->LaTeX_Output, "-");
-            CurrentNodeLaTeXOutput (current->rightChild, 0);
-            break;
-        case DIVISION:
-            fprintf(current->tree->LaTeX_Output, " \\frac{");
-            CurrentNodeLaTeXOutput (current->leftChild, 0);
-            fprintf(current->tree->LaTeX_Output, "}{");
-            CurrentNodeLaTeXOutput (current->rightChild, 0);
-            fprintf(current->tree->LaTeX_Output, "} ");
-            break;
-        case MULTIPLICATION:
-            if (NodePriority (current, current->leftChild) > 0)
-                CurrentNodeLaTeXOutput (current->leftChild, 1);
-            else
-                CurrentNodeLaTeXOutput (current->leftChild, 0);
-            fprintf(current->tree->LaTeX_Output, " \\cdot ");
-            if (NodePriority (current, current->rightChild) > 0)
-                CurrentNodeLaTeXOutput (current->rightChild, 1);
-            else
-                CurrentNodeLaTeXOutput (current->rightChild, 0);
-            break;
-        case SIN: OneOperandFunctionPrint (current, " \\sin "); break;
-        case COS: OneOperandFunctionPrint (current, " \\cos "); break;
-        case LG: OneOperandFunctionPrint (current, " \\lg "); break;
-        case LOG:
-            fprintf(current->tree->LaTeX_Output, "log_");
-            CurrentNodeLaTeXOutput (current->rightChild, 0);
-            CurrentNodeLaTeXOutput (current->leftChild, 1);
-            break;
-        case LN: OneOperandFunctionPrint (current, " \\ln "); break;
-        case TAN: OneOperandFunctionPrint (current, " \\tg "); break;
-        case CTAN: OneOperandFunctionPrint (current, " \\ctg "); break;
-        case SH: OneOperandFunctionPrint (current, " \\sh "); break;
-        case CH: OneOperandFunctionPrint (current, " \\ch "); break;
-        case TH: OneOperandFunctionPrint (current, " \\th "); break;
-        case CTH: OneOperandFunctionPrint (current, " \\cth "); break;
-        case ARCSIN: OneOperandFunctionPrint (current, " \\arcsin "); break;
-        case ARCCOS: OneOperandFunctionPrint (current, " \\arccos "); break;
-        case ARCTG: OneOperandFunctionPrint (current, " \\arctg "); break;
-        case ARCCTG: OneOperandFunctionPrint (current, " \\arcctg "); break;
-        case SQRT:
-            fprintf(current->tree->LaTeX_Output, " \\sqrt{");
-            CurrentNodeLaTeXOutput (current->rightChild, 1);
-            fprintf(current->tree->LaTeX_Output, "}");
-            break;
-        case POWER:
-            if (current->leftChild->type == OPERATION)
-                CurrentNodeLaTeXOutput (current->leftChild, true);
-            else
-                CurrentNodeLaTeXOutput (current->leftChild, false);
-            fprintf(current->tree->LaTeX_Output, "^{");
-            CurrentNodeLaTeXOutput (current->rightChild, false);
-            fprintf(current->tree->LaTeX_Output, "}");
-            break;
+#define MATH_OPERATION(operationName, operationCode, operationPrintName, diffFunction, printFunction) case operationName: printFunction
+#include "operation.txt"
+
+#undef MATH_OPERATION
     }
 }
 
@@ -437,6 +271,60 @@ void OneOperandFunctionPrint (NumericNode* current, char* nameOfFunction)
         CurrentNodeLaTeXOutput (current->rightChild, true);
     else
         CurrentNodeLaTeXOutput (current->rightChild, false);
+}
+
+void LowerPriorityOperandPrint (NumericNode* current, char* nameOfFunction)
+{
+    CurrentNodeLaTeXOutput (current->leftChild, false);
+    fprintf(current->tree->LaTeX_Output, nameOfFunction);
+    CurrentNodeLaTeXOutput (current->rightChild, false);
+}
+
+void DivisionPrint (NumericNode* current)
+{
+    fprintf(current->tree->LaTeX_Output, " \\frac{");
+    CurrentNodeLaTeXOutput (current->leftChild, false);
+    fprintf(current->tree->LaTeX_Output, "}{");
+    CurrentNodeLaTeXOutput (current->rightChild, false);
+    fprintf(current->tree->LaTeX_Output, "} ");
+}
+
+void MultiplicationPrint (NumericNode* current)
+{
+    if (NodePriority (current, current->leftChild) > 0)
+        CurrentNodeLaTeXOutput (current->leftChild, true);
+    else
+        CurrentNodeLaTeXOutput (current->leftChild, false);
+    fprintf(current->tree->LaTeX_Output, " \\cdot ");
+    if (NodePriority (current, current->rightChild) > 0)
+        CurrentNodeLaTeXOutput (current->rightChild, true);
+    else
+        CurrentNodeLaTeXOutput (current->rightChild, false);
+}
+
+void LogPrint (NumericNode* current)
+{
+    fprintf(current->tree->LaTeX_Output, "log_");
+    CurrentNodeLaTeXOutput (current->rightChild, false);
+    CurrentNodeLaTeXOutput (current->leftChild, true);
+}
+
+void SqrtPrint (NumericNode* current)
+{
+    fprintf(current->tree->LaTeX_Output, " \\sqrt{");
+    CurrentNodeLaTeXOutput (current->rightChild, 1);
+    fprintf(current->tree->LaTeX_Output, "}");
+}
+
+void PowerPrint (NumericNode* current)
+{
+    if (current->leftChild->type == OPERATION)
+        CurrentNodeLaTeXOutput (current->leftChild, true);
+    else
+        CurrentNodeLaTeXOutput (current->leftChild, false);
+    fprintf(current->tree->LaTeX_Output, "^{");
+    CurrentNodeLaTeXOutput (current->rightChild, false);
+    fprintf(current->tree->LaTeX_Output, "}");
 }
 
 void SimplifyFunction (NumericTree* tree)
@@ -464,7 +352,7 @@ int DFSMULT1 (NumericNode* current, NumericNode* parent)
         {
             if (IsZero (current->leftChild->memberValue - 1))
             {
-                SubTreeLaTeXOutput (current, DIFFERENTIATE_TYPE);
+                SubTreeLaTeXOutput (parent, DIFFERENTIATE_TYPE);
                 NumericNode* right = current->rightChild;
                 current->rightChild = nullptr;
                 NumericDestructTreeMember (current);
@@ -481,7 +369,7 @@ int DFSMULT1 (NumericNode* current, NumericNode* parent)
                     SubTreeLaTeXOutput (parent, DIFFERENTIATE_TYPE);
             } else if (IsZero (current->rightChild->memberValue - 1))
             {
-                SubTreeLaTeXOutput (current, DIFFERENTIATE_TYPE);
+                SubTreeLaTeXOutput (parent, DIFFERENTIATE_TYPE);
                 NumericNode* left = current->leftChild;
                 current->leftChild = nullptr;
                 NumericDestructTreeMember (current);
@@ -514,7 +402,7 @@ int DFSPLUS0 (NumericNode* current, NumericNode* parent)
         {
             if (IsZero (current->leftChild->memberValue))
             {
-                SubTreeLaTeXOutput (current, DIFFERENTIATE_TYPE);
+                SubTreeLaTeXOutput (parent, DIFFERENTIATE_TYPE);
                 NumericNode* right = current->rightChild;
                 current->rightChild = nullptr;
                 NumericDestructTreeMember (current);
@@ -532,7 +420,7 @@ int DFSPLUS0 (NumericNode* current, NumericNode* parent)
                     SubTreeLaTeXOutput (parent, DIFFERENTIATE_TYPE);
             } else if (IsZero (current->rightChild->memberValue))
             {
-                SubTreeLaTeXOutput (current, DIFFERENTIATE_TYPE);
+                SubTreeLaTeXOutput (parent, DIFFERENTIATE_TYPE);
                 NumericNode* left = current->leftChild;
                 current->leftChild = nullptr;
                 NumericDestructTreeMember (current);
