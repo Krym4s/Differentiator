@@ -1,0 +1,5 @@
+set xrange [-1:1]
+set yrange [0:5]
+set terminal png
+set output "graphic.png"
+plot "graphic.txt" with lines, "linear.txt" with lines

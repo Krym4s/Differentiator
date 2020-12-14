@@ -104,6 +104,12 @@
 		<Unit filename="C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/Numeric_Tree.h">
 			<Option target="diffur_ded"/>
 		</Unit>
+		<Unit filename="C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/calculator.cpp">
+			<Option target="diffur_ded"/>
+		</Unit>
+		<Unit filename="C:/Users/egolg/CLionProjects/diffur_ded/cmake-build-debug/calculator.h">
+			<Option target="diffur_ded"/>
+		</Unit>
 		<Unit filename="C:/Users/egolg/CLionProjects/diffur_ded/main.cpp">
 			<Option target="diffur_ded"/>
 		</Unit>

@@ -250,6 +250,33 @@ Numeric_Tree.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\diffur_ded.dir\build.make CMakeFiles/diffur_ded.dir/Numeric_Tree.cpp.s
 .PHONY : Numeric_Tree.cpp.s
 
+calculator.obj: calculator.cpp.obj
+
+.PHONY : calculator.obj
+
+# target to build an object file
+calculator.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\diffur_ded.dir\build.make CMakeFiles/diffur_ded.dir/calculator.cpp.obj
+.PHONY : calculator.cpp.obj
+
+calculator.i: calculator.cpp.i
+
+.PHONY : calculator.i
+
+# target to preprocess a source file
+calculator.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\diffur_ded.dir\build.make CMakeFiles/diffur_ded.dir/calculator.cpp.i
+.PHONY : calculator.cpp.i
+
+calculator.s: calculator.cpp.s
+
+.PHONY : calculator.s
+
+# target to generate assembly for a file
+calculator.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\diffur_ded.dir\build.make CMakeFiles/diffur_ded.dir/calculator.cpp.s
+.PHONY : calculator.cpp.s
+
 main.obj: main.cpp.obj
 
 .PHONY : main.obj
@@ -298,6 +325,9 @@ help:
 	@echo ... Numeric_Tree.obj
 	@echo ... Numeric_Tree.i
 	@echo ... Numeric_Tree.s
+	@echo ... calculator.obj
+	@echo ... calculator.i
+	@echo ... calculator.s
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s

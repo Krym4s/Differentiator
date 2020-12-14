@@ -19,7 +19,7 @@ enum NodeType
 
 enum Commands
 {
-#define MATH_OPERATION(operationName, operationCode, operationPrintName, diffFunction, printFunction) operationName = operationCode,
+#define MATH_OPERATION(operationName, operationCode, operationPrintName, diffFunction, printFunction, calcFunc) operationName = operationCode,
 #include "operation.txt"
 #undef MATH_OPERATION
 };
@@ -28,6 +28,7 @@ enum PhraseType
 {
     DIFFERENTIATE_TYPE,
     SIMPLIFY_TYPE,
+    NO_PHRASE,
 };
 
 struct NumericTree;
@@ -47,7 +48,7 @@ struct NumericTree
     NumericNode* root;
     unsigned int size;
     char* graph_logs_name;
-    int variables[26];
+    double variables[26];
     FILE* LaTeX_Output;
 };
 
