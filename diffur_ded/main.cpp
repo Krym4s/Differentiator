@@ -6,54 +6,73 @@
 
 int main()
 {
-    /*char* b = "123.01(asd";
-    double c = atof (b);
-    printf ("%lg",c);*/
 
-    NumericTree tree = {};
-    Vocabulary vocabulary = {};
-    VocabularyConstruct (&vocabulary, "diff_phrases.txt", "simp_phrases.txt");
+    //----------------------------set randomiser--------------------------
+    srand(time(nullptr));
+
+    //------------------------create function tree------------------------
     char* fileName = "Num_Logs.dot";
-    char* fileDiffName = "New_Tree.dot";
-    NumericTreeConstruct (&tree, fileName, "diffur.tex");
+    char* LaTexName = "diffur.tex";
+    NumericTree tree = {};
+    FILE* diffLaTex = fopen (LaTexName, "w");
+    NumericTreeConstruct (&tree, fileName, LaTexName, diffLaTex);
+
+    //---------------------create vocabulary of genious phrases----------
+    Vocabulary vocabulary = {};
+    VocabularyConstruct (&vocabulary, "diff_phrases.txt", "simplify_phrases.txt");
+
+    //-------------fill function tree with data about function----------
     char* input = "expression.txt";
-    ReadDifferentiatorData (input, &tree);
-    //NumericGraphicDump (&tree);
+    Expression exp ={};
+    ExpressionConstruct (&exp, input);
+    tree.root = GetG (&exp, &tree);
+
+    //-----------prepare differentiated tree-----------------------------
+    char* fileDiffName = "New_Tree.dot";
     NumericTree diffTree = {};
-    NumericTreeConstruct (&diffTree, fileDiffName, "diffur.tex");
-    diffTree.root = DifferentiateSubTree (tree.root, &diffTree);
-    printf ("%c\n", (char)diffTree.root->leftChild->rightChild->memberValue + '0');
-    
-    //NumericGraphicDump (&diffTree);
+    NumericTreeConstruct (&diffTree, fileDiffName, "diffur.tex", diffLaTex);
     PrepareLatexDocument (&diffTree);
-    SubTreeLaTeXOutput (diffTree.root, DIFFERENTIATE_TYPE);
-    SimplifyFunction (&diffTree);
-    SubTreeLaTeXOutput (diffTree.root, DIFFERENTIATE_TYPE);
-    //NumericTree d2 = {};
-    //NumericTree d3 = {};
-    //NumericTree d4 = {};
-    //NumericTree d5 = {};
-    //NumericTreeConstruct(&d2, fileDiffName, "diffur.tex");
-    //NumericTreeConstruct(&d3, fileDiffName, "diffur.tex");
-    //NumericTreeConstruct(&d4, fileDiffName, "diffur.tex");
-    //NumericTreeConstruct(&d5, fileDiffName, "diffur.tex");
-    //d2.root = DifferentiateSubTree (diffTree.root, &d2);
-    //SimplifyFunction (&d2);
-    //SubTreeLaTeXOutput (d2.root, DIFFERENTIATE_TYPE);
-    //d3.root = DifferentiateSubTree (d2.root, &d3);
-    //SimplifyFunction (&d3);
-    //SubTreeLaTeXOutput (d3.root, DIFFERENTIATE_TYPE);
-    //d4.root = DifferentiateSubTree (d3.root, &d4);
-    //SimplifyFunction (&d4);
-    //SubTreeLaTeXOutput (d4.root, DIFFERENTIATE_TYPE);
-    //d5.root = DifferentiateSubTree (d4.root, &d5);
-    //SimplifyFunction (&d5);
-    //SubTreeLaTeXOutput (d5.root, DIFFERENTIATE_TYPE);
+    SubTreeLaTeXOutputEQ (tree.root, NO_PHRASE);
+    diffTree.root = DifferentiateSubTree (tree.root, &diffTree, &vocabulary);
+
+    //--------function simplify--------------------------------------------
+    fprintf (diffTree.LaTeX_Output, "Функция без упрощения:\n\n");
+    SubTreeLaTeXOutput (diffTree.root, NO_PHRASE);
+    SimplifyFunction (&diffTree, &vocabulary);
+    fprintf (diffTree.LaTeX_Output, "ИТОГ:\n\n");
+    //SubTreeLaTeXOutput (diffTree.root, NO_PHRASE);
+
+    //----------idk how to call it, but it's important----------------------
+    NumericTree tempTree = {};
+    NumericTreeConstruct (&tempTree, "fileName.txt", LaTexName, diffLaTex);
+    tempTree.root = CopyNode(diffTree.root, &tempTree);
+    printf ("ono rabotaet\n");
+    SeparatedTree separator = {};
+    SeparateTree (&separator, &tempTree);
+    printf ("ono separiruet\n");
+    SubTreeLaTeXOutputEQ (tempTree.root, NO_PHRASE);
+    fprintf (diffLaTex, "где");
+    for (int i = 0 ;i < separator.nSubTrees; i++)
+        SubTreeLaTeXOutputWithLetters((separator.subtrees + i)->root, NO_PHRASE, 'A' + i);
+
+
+    //-------Printing Teylor series--------------------------------------
+    double point = 3;
+    PrintSeries (&tree, 3, point, 'x');
+
+    //------Printing graphics--------------------------------------------
+    char* imageName = "graphic.png";
+    makeGraphicInterpretation ("graphic.txt", imageName, &tree, -10, 10, 'x', point, -10, 10);
+    InsertGraphicIntoLaTeX (imageName, tree.LaTeX_Output);
+
+    //--------end of programm and closing--------------------------------
     CloseLatexOutput (&diffTree);
     NumericDestructTreeMember (tree.root);
     NumericDestructTreeMember (diffTree.root);
-    //system ("latex diffur.tex");
-    //printf ("%c", (int)tree.root->rightChild->rightChild->memberValue + 'a');
+    fclose (diffLaTex);
+    system ("pdflatex diffur.tex");
+    system ("start diffur.pdf");
+
     return 0;
 }
 
