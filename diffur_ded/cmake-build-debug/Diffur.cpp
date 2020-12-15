@@ -31,8 +31,9 @@ int VocabularyConstruct (Vocabulary* vocabulary, char* diffFileName, char* simpl
     vocabulary->diffLines = diffLines;
     vocabulary->simplifyLines = simplifyLines;
     return 0;
-
 }
+
+//-------------------------------------------------------------------------
 
 TreeError ReadDifferentiatorData (char* fileNameInput, NumericTree* tree)
 {
@@ -47,6 +48,8 @@ TreeError ReadDifferentiatorData (char* fileNameInput, NumericTree* tree)
 
     return NO_TREE_ERRORS;
 }
+
+//--------------------------------------------------------------------------------
 
 NumericNode* DifferentiatorDataInterpreter (char** beginOfExpression, NumericTree* tree)
 {
@@ -85,6 +88,7 @@ NumericNode* DifferentiatorDataInterpreter (char** beginOfExpression, NumericTre
     return currentNode;
 }
 
+//----------------------------------------------------------------------------
 
 int CommandDeterminant (char** beginOfExpression, NumericNode* current)
 {
@@ -111,6 +115,8 @@ int CommandDeterminant (char** beginOfExpression, NumericNode* current)
 
     return 1;
 }
+
+//-------------------------------------------------------------------
 
 int VertexCommandHandler (char** beginOfExpression, int commandSize, NumericNode* current, double command, NodeType type)
 {
@@ -139,7 +145,7 @@ NumericNode* DifferentiateSubTree (NumericNode* subRoot, NumericTree* diffTree, 
             newNode = DifferentiateOperation (subRoot, diffTree, vocabulary); break;
 
     }
-    if (vocabulary)
+    if (vocabulary && diffTree->LaTeX_Output)
     {
         PrintGeniousPhrase (DIFFERENTIATE_TYPE, subRoot->tree->LaTeX_Output, vocabulary);
         SubTreeDiffLaTeXOutput (subRoot, DIFFERENTIATE_TYPE);
@@ -147,6 +153,8 @@ NumericNode* DifferentiateSubTree (NumericNode* subRoot, NumericTree* diffTree, 
     }
     return newNode;
 }
+
+//--------------------------------------------------------------------
 
 NumericNode* CopyNode (NumericNode* oldNode, NumericTree* newTree)
 {
@@ -174,6 +182,8 @@ NumericNode* CopyNode (NumericNode* oldNode, NumericTree* newTree)
     return newNode;
 }
 
+//---------------------------------------------------------------------------
+
 NumericNode* DifferentiateOperation (NumericNode* subRoot, NumericTree* diffTree, Vocabulary* vocabulary)
 {
     assert (subRoot);
@@ -187,6 +197,8 @@ NumericNode* DifferentiateOperation (NumericNode* subRoot, NumericTree* diffTree
 #undef MATH_OPERATION
     }
 }
+
+//-------------------------------------------------------------------
 
 void PrepareLatexDocument (NumericTree* tree)
 {
@@ -219,16 +231,50 @@ void PrepareLatexDocument (NumericTree* tree)
              "\n"
              "\\begin{document}\n"
              "\n"
-             "\\maketitle\n\n");
+             "\\maketitle\n\n"
+             "Прикоснуться хотя бы поверхностно к науке нам поможет только чудо, и уж явно не понимание.\n"
+             "В этом и состоит причина использования всяческих программ, и не в коем случае собственных рук!!!\n"
+             "В качестве поистинне научной задачи предлагаю рассмотреть покрытие продолговатым предметом функцию неравномерного количества долгов студента\n"
+             "Так как до великих открытий еще далеко, преедлагается рассматривать так называемый \"болт\" как прямую, в связи с малостью его поперечных размеров.\n\n"
+             "Функция долгов студента очевидным образом представляется, как:\n\n");
 }
 
 NumericNode* SubTreeLaTeXOutput (NumericNode* root, PhraseType type)
 {
     assert (root);
-    //PrintGeniousPhrase (type);
-    fprintf (root->tree->LaTeX_Output, "$");
-    CurrentNodeLaTeXOutput (root, false);
-    fprintf (root->tree->LaTeX_Output, "$\n\n");
+    if (root->tree->LaTeX_Output)
+    {
+        //PrintGeniousPhrase (type);
+        fprintf (root->tree->LaTeX_Output, "\n\n\\begin{center}$");
+        CurrentNodeLaTeXOutput (root, false);
+        fprintf (root->tree->LaTeX_Output, "$\n\n\\end{center}\n\n");
+    }
+    return root;
+}
+
+NumericNode* SubTreeLaTeXOutputEQ (NumericNode* root, PhraseType type)
+{
+    assert (root);
+    if (root->tree->LaTeX_Output)
+    {
+        //PrintGeniousPhrase (type);
+        fprintf (root->tree->LaTeX_Output, "\\begin{equation}");
+        CurrentNodeLaTeXOutput (root, false);
+        fprintf (root->tree->LaTeX_Output, "\\end{equation}\n\n");
+    }
+    return root;
+}
+
+NumericNode* SubTreeLaTeXOutputWithLetters (NumericNode* root, PhraseType type, char letter)
+{
+    assert (root);
+    if (root->tree->LaTeX_Output)
+    {
+        //PrintGeniousPhrase (type);
+        fprintf (root->tree->LaTeX_Output, "\\begin{align*} %c =", letter);
+        CurrentNodeLaTeXOutput (root, false);
+        fprintf (root->tree->LaTeX_Output, "\\end{align*}\n\n");
+    }
     return root;
 }
 
@@ -236,9 +282,9 @@ NumericNode* SubTreeDiffLaTeXOutput (NumericNode* root, PhraseType type)
 {
     assert (root);
 
-    fprintf (root->tree->LaTeX_Output, "$(");
+    fprintf (root->tree->LaTeX_Output, "\\begin{center}$(");
     CurrentNodeLaTeXOutput (root, false);
-    fprintf (root->tree->LaTeX_Output, ")'$\n\n");
+    fprintf (root->tree->LaTeX_Output, ")'$\n\n\\end{center}\n\n");
     return root;
 }
 
@@ -279,8 +325,18 @@ void CurrentNodeLaTeXOutput (NumericNode* current, bool ParanthesesNeed)
     switch (current->type)
     {
         case OPERATION: CurrentOperationLaTeXOutput (current); break;
-        case CONSTANT : fprintf (current->tree->LaTeX_Output, "%lg", current->memberValue); break;
-        case VARIABLE : fprintf (current->tree->LaTeX_Output, "%c", (char)current->memberValue + 'a'); break;
+        case CONSTANT :
+            if (current->memberValue < 0)
+                fprintf (current->tree->LaTeX_Output, "(%lg)", current->memberValue);
+            else
+                fprintf (current->tree->LaTeX_Output, "%lg", current->memberValue);
+            break;
+        case VARIABLE :
+            if (current->memberValue <= 'z' - 'a' && current->memberValue >= 0)
+                fprintf (current->tree->LaTeX_Output, "%c", (char)current->memberValue + 'a');
+            else
+                fprintf (current->tree->LaTeX_Output, "%c", (char)current->memberValue);
+            break;
     }
 
     if (ParanthesesNeed)
@@ -301,9 +357,7 @@ void CurrentOperationLaTeXOutput (NumericNode* current)
 
 void PrintGeniousPhrase (PhraseType type, FILE* output, Vocabulary* vocabulary)
 {
-    assert (output);
-    //assert (vocabulary);
-    if (vocabulary)
+    if (vocabulary && output)
     switch (type)
     {
         case DIFFERENTIATE_TYPE:
@@ -318,8 +372,10 @@ void PrintGeniousPhrase (PhraseType type, FILE* output, Vocabulary* vocabulary)
 void CloseLatexOutput (NumericTree* tree)
 {
     assert (tree);
+    fprintf (tree->LaTeX_Output, "\n\nК сожалению, даже часы, проведенные за игрой в тетрис не помогли нам достичь полного осознания прикладывания \"болта\" к графику, эта способность дается не каждому, и мы пересекали ось долгов, обретая способность летать...\n\n");
+
     fprintf (tree->LaTeX_Output, "\\section{Список Литературы}\n\n");
-    fprintf (tree->LaTeX_Output, "0. Репозиторий https://github.com/Krym4s\n\n"
+    fprintf (tree->LaTeX_Output, "0. https://github.com/Krym4s/Differentiator\n\n"
                                  "1. Деятели русской науки XIX - XX веков. Вып. 2 / РАН, Ин-т ист. естеств. и техники, Ин-т рос. истории; Отв. ред. И.П. Медведев. - СПб.: Дмитрий Буланин, 2001. - 414 с.\n\n"
                                  "2. Сапрыкин Д. Л. Образовательный потенциал Российской Империи. М.:ИИЕТ, 2010\n\n"
                                  "3. Организация науки в России в первой половине XIX века / Г.Е. Павлова; АН СССР, Ин-т истории естествознания и техники; Отв. ред. С.Р. Микулинский. - М. : Наука, 1990. - 239 с.\n\n"
@@ -363,21 +419,37 @@ void DivisionPrint (NumericNode* current)
     fprintf(current->tree->LaTeX_Output, "}{");
     CurrentNodeLaTeXOutput (current->rightChild, false);
     fprintf(current->tree->LaTeX_Output, "} ");
+
 }
 
 void MultiplicationPrint (NumericNode* current)
 {
     assert (current);
+    if (current->leftChild->type == CONSTANT)
+    {
+        if (NodePriority (current, current->leftChild) > 0)
+            CurrentNodeLaTeXOutput (current->leftChild, true);
+        else
+            CurrentNodeLaTeXOutput (current->leftChild, false);
+        fprintf(current->tree->LaTeX_Output, " \\cdot ");
+        if (NodePriority (current, current->rightChild) > 0)
+            CurrentNodeLaTeXOutput (current->rightChild, true);
+        else
+            CurrentNodeLaTeXOutput (current->rightChild, false);
+    }
+    else
+    {
+        if (NodePriority (current, current->rightChild) > 0)
+            CurrentNodeLaTeXOutput (current->rightChild, true);
+        else
+            CurrentNodeLaTeXOutput (current->rightChild, false);
+        fprintf(current->tree->LaTeX_Output, " \\cdot ");
+        if (NodePriority (current, current->leftChild) > 0)
+            CurrentNodeLaTeXOutput (current->leftChild, true);
+        else
+            CurrentNodeLaTeXOutput (current->leftChild, false);
+    }
 
-    if (NodePriority (current, current->leftChild) > 0)
-        CurrentNodeLaTeXOutput (current->leftChild, true);
-    else
-        CurrentNodeLaTeXOutput (current->leftChild, false);
-    fprintf(current->tree->LaTeX_Output, " \\cdot ");
-    if (NodePriority (current, current->rightChild) > 0)
-        CurrentNodeLaTeXOutput (current->rightChild, true);
-    else
-        CurrentNodeLaTeXOutput (current->rightChild, false);
 }
 
 void LogPrint (NumericNode* current)
@@ -413,7 +485,6 @@ void PowerPrint (NumericNode* current)
 void SimplifyFunction (NumericTree* tree, Vocabulary* vocabulary)
 {
     assert (tree);
-    //assert (vocabulary);
     int count = 0;
     do
     {
@@ -426,6 +497,7 @@ void SimplifyFunction (NumericTree* tree, Vocabulary* vocabulary)
         count += DFSSUB0 (tree->root, nullptr, vocabulary);
         count += DFS1POW (tree->root, nullptr, vocabulary);
         count += DFSPRECALCULATECONSTS (tree->root, nullptr, vocabulary);
+        count += DFSPLUSMINUSMUL (tree->root, nullptr, vocabulary);
 
     }while (count != 0);
 }
@@ -446,8 +518,6 @@ int DFSMULT1 (NumericNode* current, NumericNode* parent, Vocabulary* vocabulary)
 
 int DFSDIV1 (NumericNode* current, NumericNode* parent, Vocabulary* vocabulary)
 {
-    //assert (vocabulary);
-
     int changed = 0;
     if (current)
     {
@@ -631,6 +701,61 @@ int DeleteMeaninglessNode (NumericNode* current, NumericNode* parent, double con
     return changed;
 }
 
+int DeleteMeaninglessRightNode (NumericNode* current, NumericNode* parent, double constant, Commands operation, Vocabulary* vocabulary)
+{
+    int changed = 0;
+    if (IsZero(current->memberValue - operation) && IsZero(current->leftChild->memberValue - constant)) {
+        PrintGeniousPhrase(SIMPLIFY_TYPE, current->tree->LaTeX_Output, vocabulary);
+        if (parent && vocabulary)
+            SubTreeLaTeXOutput(parent, DIFFERENTIATE_TYPE);
+        NumericNode *right = current->rightChild;
+        current->rightChild = nullptr;
+        NumericDestructTreeMember(current);
+        changed++;
+        if (!parent)
+            right->tree->root = right;
+        else if (parent->rightChild == current)
+            parent->rightChild = right;
+        else if (parent->leftChild == current)
+            parent->leftChild = right;
+        if (vocabulary)
+            if (!parent)
+                SubTreeLaTeXOutput(right->tree->root, DIFFERENTIATE_TYPE);
+            else
+                SubTreeLaTeXOutput(parent, DIFFERENTIATE_TYPE);
+    }
+
+    return changed;
+}
+
+int DeleteMeaninglessLeftNode (NumericNode* current, NumericNode* parent, double constant, Commands operation, Vocabulary* vocabulary)
+{
+    int changed = 0;
+    if (IsZero(current->memberValue - operation) && IsZero (current->rightChild->memberValue - constant))
+    {
+        PrintGeniousPhrase (SIMPLIFY_TYPE, current->tree->LaTeX_Output, vocabulary);
+        if (parent)
+            SubTreeLaTeXOutput (parent, DIFFERENTIATE_TYPE);
+        NumericNode* left = current->leftChild;
+        current->leftChild = nullptr;
+        NumericDestructTreeMember (current);
+        changed++;
+        if (!parent)
+            left->tree->root = left;
+        else if (parent->rightChild == current)
+            parent->rightChild = left;
+        else if (parent->leftChild == current)
+            parent->leftChild = left;
+
+        if (vocabulary)
+            if (!parent)
+                SubTreeLaTeXOutput (left->tree->root, DIFFERENTIATE_TYPE);
+            else
+                SubTreeLaTeXOutput (parent, DIFFERENTIATE_TYPE);
+    }
+    return changed;
+}
+
 int DFSPOW0 (NumericNode* current, NumericNode* parent, Vocabulary* vocabulary)
 {
     //assert (vocabulary);
@@ -702,38 +827,23 @@ int DFSPRECALCULATECONSTS (NumericNode* current, NumericNode* parent, Vocabulary
             current->rightChild->type == CONSTANT) {
             switch ((int) current->memberValue) {
                 case ADD:
-                    change++;
-                    PrintGeniousPhrase(SIMPLIFY_TYPE, current->tree->LaTeX_Output, vocabulary);
-                    if (vocabulary)
-                        SubTreeLaTeXOutput(current, DIFFERENTIATE_TYPE);
+                    change += PrecalculatedSucessfulPrint (current, vocabulary);
                     current->memberValue = current->leftChild->memberValue + current->rightChild->memberValue;
                     break;
                 case SUBTRACTION:
-                    change++;
-                    PrintGeniousPhrase(SIMPLIFY_TYPE, current->tree->LaTeX_Output, vocabulary);
-                    if (vocabulary)
-                        SubTreeLaTeXOutput(current, DIFFERENTIATE_TYPE);
+                    change += PrecalculatedSucessfulPrint (current, vocabulary);
                     current->memberValue = current->leftChild->memberValue - current->rightChild->memberValue;
                     break;
                 case MULTIPLICATION:
-                    change++;
-                    PrintGeniousPhrase(SIMPLIFY_TYPE, current->tree->LaTeX_Output, vocabulary);
-                    if (vocabulary)
-                        SubTreeLaTeXOutput(current, DIFFERENTIATE_TYPE);
+                    change += PrecalculatedSucessfulPrint (current, vocabulary);
                     current->memberValue = current->leftChild->memberValue * current->rightChild->memberValue;
                     break;
                 case DIVISION:
-                    change++;
-                    PrintGeniousPhrase(SIMPLIFY_TYPE, current->tree->LaTeX_Output, vocabulary);
-                    if (vocabulary)
-                        SubTreeLaTeXOutput(current, DIFFERENTIATE_TYPE);
+                    change += PrecalculatedSucessfulPrint (current, vocabulary);
                     current->memberValue = current->leftChild->memberValue / current->rightChild->memberValue;
                     break;
                 case POWER:
-                    change++;
-                    PrintGeniousPhrase(SIMPLIFY_TYPE, current->tree->LaTeX_Output, vocabulary);
-                    if (vocabulary)
-                        SubTreeLaTeXOutput(current, DIFFERENTIATE_TYPE);
+                    change += PrecalculatedSucessfulPrint (current, vocabulary);
                     current->memberValue = pow(current->leftChild->memberValue, current->rightChild->memberValue);
                     break;
 
@@ -748,6 +858,14 @@ int DFSPRECALCULATECONSTS (NumericNode* current, NumericNode* parent, Vocabulary
         }
     }
     return change;
+}
+
+int PrecalculatedSucessfulPrint (NumericNode* current, Vocabulary* vocabulary)
+{
+    PrintGeniousPhrase(SIMPLIFY_TYPE, current->tree->LaTeX_Output, vocabulary);
+    if (vocabulary)
+        SubTreeLaTeXOutput(current, DIFFERENTIATE_TYPE);
+    return 1;
 }
 
 bool IsZero (double value)
@@ -776,6 +894,7 @@ double DFS_TreeCalculate (NumericNode* current)
 #undef MATH_OPERATION
 
         }
+    return 0;
 }
 
 int PrintSeries (NumericTree* tree, unsigned int degree, double point, char variable)
@@ -793,14 +912,14 @@ int PrintSeries (NumericTree* tree, unsigned int degree, double point, char vari
 
     for (int i = 1; i <= degree; i++)
     {
-        NumericTreeConstruct (diffNtree + i, tree->graph_logs_name, "tt.txt");
+        NumericTreeConstruct (diffNtree + i, tree->graph_logs_name, "tt.txt", nullptr);
         diffNtree[i].variables[vIndex] = tree->variables[vIndex];
         diffNtree[i].root = DifferentiateSubTree (diffNtree[i-1].root, diffNtree + i, nullptr);
         SimplifyFunction (diffNtree + i, nullptr);
-        diffNtree[i].LaTeX_Output = tree->LaTeX_Output;
+        diffNtree[i].LaTeX_Output = nullptr;
         coefArrays[i] = DFS_TreeCalculate (diffNtree[i].root);
     }
-    fprintf (tree->LaTeX_Output, "\n\nВыводим невероятный ряд тейлора с остаточным членом в форме ))))))\n\n$");
+    fprintf (tree->LaTeX_Output, "\n\nВспоминая свой опыт, забивание произошло примерно в точке изуения рядов Тейлора, вот его члены слева на право, что на нашем графике соответсвует значению %lg.\n\n \\begin{align*}", point);
     fprintf (tree->LaTeX_Output, "f(x) = %.3lg + ", coefArrays[0]);
     if (point > 0)
         fprintf (tree->LaTeX_Output, "\\frac{%.3lg}{1!} \\cdot (x - %lg) + ", coefArrays[1], point);
@@ -825,7 +944,7 @@ int PrintSeries (NumericTree* tree, unsigned int degree, double point, char vari
     else
         fprintf (tree->LaTeX_Output, "o(x^{%d})", degree + 1);
 
-    fprintf (tree->LaTeX_Output, "$\n\n");
+    fprintf (tree->LaTeX_Output, "\\end{align*}\n\n");
     return 0;
 }
 
@@ -857,7 +976,7 @@ int makeGraphicInterpretation (char* TextFileName, char* PNG_FileName, NumericTr
     fclose (textOutput);
     textOutput = fopen ("linear.txt", "w");
     NumericTree diffTree = {};
-    NumericTreeConstruct (&diffTree, nullptr, "tt.tex");
+    NumericTreeConstruct (&diffTree, nullptr, "nofile", nullptr);
     diffTree.variables[getVariableCode(variable)] = interestingPoint;
     diffTree.root = DifferentiateSubTree (tree->root, &diffTree, nullptr);
     double k = DFS_TreeCalculate (diffTree.root);
@@ -906,4 +1025,115 @@ void InsertGraphicIntoLaTeX (char* fileName, FILE* output)
 {
     fprintf (output, "Однако, все эти преобразования и мороки - сущая ерунда и пустая трата времени. наиболее надежный метод вычислить производную - чиркнуть на глаз касательную.\n\n");
     fprintf (output, "\\includegraphics{%s}", fileName);
+}
+
+int DFSPLUSMINUSMUL (NumericNode* current, NumericNode* parent, Vocabulary* vocabulary)
+{
+    int changed = 0;
+    if (current)
+    {
+        changed += DFSPLUSMINUSMUL (current->rightChild, current, vocabulary);
+        changed += DFSPLUSMINUSMUL (current->leftChild,  current, vocabulary);
+        if (current->type == OPERATION && current->memberValue == MULTIPLICATION)
+        {
+            if (parent->memberValue == ADD)
+            {
+                if (current->leftChild->type == CONSTANT && current->leftChild->memberValue == -1)
+                {
+                    parent->memberValue = SUBTRACTION;
+                    if (parent->rightChild == current)
+                        parent->rightChild = current->rightChild;
+                    else
+                        parent->leftChild = current->rightChild;
+
+                    free (current->leftChild);
+                    free (current);
+                    return changed + 1;
+                }
+                else if (current->rightChild->type == CONSTANT && current->rightChild->memberValue == -1)
+                {
+                    parent->memberValue = SUBTRACTION;
+                    if (parent->rightChild == current)
+                        parent->rightChild = current->leftChild;
+                    else
+                        parent->leftChild = current->leftChild;
+
+                    free (current->rightChild);
+                    free (current);
+                    return changed + 1;
+                }
+            }
+            else if (parent->memberValue == SUBTRACTION)
+            {
+                if (current->leftChild->type == CONSTANT && current->leftChild->memberValue == -1)
+                {
+                    parent->memberValue = ADD;
+                    if (parent->rightChild == current)
+                        parent->rightChild = current->rightChild;
+                    else
+                        parent->leftChild = current->rightChild;
+
+                    free (current->leftChild);
+                    free (current);
+                    return changed + 1;
+                }
+                else if (current->rightChild->type == CONSTANT && current->rightChild->memberValue == -1)
+                {
+                    parent->memberValue = ADD;
+                    if (parent->rightChild == current)
+                        parent->rightChild = current->leftChild;
+                    else
+                        parent->leftChild = current->leftChild;
+
+                    free (current->rightChild);
+                    free (current);
+                    return changed + 1;
+                }
+            }
+        }
+    }
+    return changed;
+}
+
+
+int SeparateTree(SeparatedTree* separator, NumericTree* tree)
+{
+    separator->nSubTrees = 0;
+    separator->subtrees = (NumericTree*) calloc (RECOMMENDED_NSUBTREES, sizeof(*separator->subtrees));
+    if (!separator->subtrees)
+        return -1;
+
+    return SubTreeSeparator (separator, tree->root, nullptr);
+}
+
+int SubTreeSeparator (SeparatedTree* separator, NumericNode* subRoot, NumericNode* parent)
+{
+    assert (separator);
+
+    int depth = 0;
+    if (subRoot) {
+        if (subRoot->type == VARIABLE || subRoot->type == CONSTANT)
+            depth = 1;
+        else if (subRoot->rightChild && subRoot->leftChild)
+            depth += (SubTreeSeparator(separator, subRoot->leftChild,  subRoot) +
+                      SubTreeSeparator(separator, subRoot->rightChild, subRoot) + 1);
+        else if (subRoot->rightChild)
+            depth += (SubTreeSeparator(separator, subRoot->rightChild, subRoot) + 1);
+        else if (subRoot->leftChild)
+            depth += (SubTreeSeparator(separator, subRoot->leftChild, subRoot) + 1);
+
+        if (depth >= RECOMMENDED_DEPTH && parent != nullptr) {
+            (separator->subtrees + separator->nSubTrees)->LaTeX_Output = subRoot->tree->LaTeX_Output;
+            (separator->subtrees + separator->nSubTrees)->root = CopyNode (subRoot,separator->subtrees + separator->nSubTrees);
+
+            subRoot->rightChild = nullptr;
+            subRoot->leftChild = nullptr;
+            subRoot->type = VARIABLE;
+            subRoot->memberValue = 'A' + separator->nSubTrees;
+
+            separator->nSubTrees++;
+            depth = 1;
+        }
+    }
+    return depth;
 }

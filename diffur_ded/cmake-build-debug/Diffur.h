@@ -22,6 +22,20 @@ struct Vocabulary
     String* simplifyLines;
 };
 
+struct SeparatedTree
+{
+    NumericTree* subtrees;
+    unsigned int nSubTrees;
+};
+
+const unsigned int RECOMMENDED_NSUBTREES = 20000;
+
+const unsigned int RECOMMENDED_DEPTH = 40;
+
+int SeparateTree (SeparatedTree* separator, NumericTree* tree);
+
+int SubTreeSeparator (SeparatedTree* separator, NumericNode* subRoot, NumericNode* parent);
+
 int VocabularyConstruct (Vocabulary* vocabulary, char* diffFileName, char* simplifyFileName);
 
 TreeError ReadDifferentiatorData (char* fileNameInput, NumericTree* tree);
@@ -90,6 +104,12 @@ void ReplaceSubTreeWithConstant (NumericTree* tree, NumericNode* parent, Numeric
 
 int DeleteMeaninglessNode (NumericNode* current, NumericNode* parent, double constant, Commands operation, Vocabulary* vocabulary);
 
+int DeleteMeaninglessRightNode (NumericNode* current, NumericNode* parent, double constant, Commands operation, Vocabulary* vocabulary);
+
+int DeleteMeaninglessLeftNode (NumericNode* current, NumericNode* parent, double constant, Commands operation, Vocabulary* vocabulary);
+
+int PrecalculatedSucessfulPrint (NumericNode* current, Vocabulary* vocabulary);
+
 double DFS_TreeCalculate (NumericNode* current);
 
 int PrintSeries (NumericTree* tree, unsigned int degree, double point, char variable);
@@ -101,5 +121,13 @@ void InsertGraphicIntoLaTeX (char* fileName, FILE* output);
 int getVariableCode (char variable);
 
 bool IsZero (double value);
+
+NumericNode* FindEqualSubTree(NumericNode* root, NumericNode* current);
+
+int DFSPLUSMINUSMUL (NumericNode* current, NumericNode* parent, Vocabulary* vocabulary);
+
+NumericNode* SubTreeLaTeXOutputWithLetters (NumericNode* root, PhraseType type, char letter);
+
+NumericNode* SubTreeLaTeXOutputEQ (NumericNode* root, PhraseType type);
 
 #endif //DIFFUR_DED_DIFFUR_H

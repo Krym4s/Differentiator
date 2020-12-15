@@ -15,7 +15,7 @@
 #define ASSERTEDTREEMEMBER !NumericTreeVerify (thou->tree) || NumericGraphicDump (thou->tree);
 #endif
 
-TreeError NumericTreeConstruct (NumericTree* thou, char* graph_logs, char* LaTeX_Output_Name)
+TreeError NumericTreeConstruct (NumericTree* thou, char* graph_logs, char* LaTeX_Output_Name, FILE* latexOutput)
 {
     assert (thou);
     thou->size = 0;
@@ -24,9 +24,7 @@ TreeError NumericTreeConstruct (NumericTree* thou, char* graph_logs, char* LaTeX
     for (int i = 0 ; i < 26; i++)
         thou->variables[i] = 0;
 
-    thou->LaTeX_Output = fopen (LaTeX_Output_Name, "w");
-    if (!thou->LaTeX_Output)
-        return NO_TREE_FREE_MEMORY;
+    thou->LaTeX_Output = latexOutput;
 
     return NO_TREE_ERRORS;
 }

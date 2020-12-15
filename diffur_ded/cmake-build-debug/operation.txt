@@ -5,56 +5,99 @@
 #define LC DFS_TreeCalculate (current->leftChild)
 #define RC DFS_TreeCalculate (current->rightChild)
 
-#define ADD_F(x,y) CreateNewNode (x, y, ADD, OPERATION, diffTree)
-#define SUBTRACTION_F(x,y) CreateNewNode (x, y, SUBTRACTION, OPERATION, diffTree)
-#define DIVISION_F(x,y) CreateNewNode (x, y, DIVISION, OPERATION, diffTree)
+#define ADD_F(x,y)            CreateNewNode (x, y, ADD, OPERATION, diffTree)
+#define SUBTRACTION_F(x,y)    CreateNewNode (x, y, SUBTRACTION, OPERATION, diffTree)
+#define DIVISION_F(x,y)       CreateNewNode (x, y, DIVISION, OPERATION, diffTree)
 #define MULTIPLICATION_F(x,y) CreateNewNode (x, y, MULTIPLICATION, OPERATION, diffTree)
-#define POWER_F(x,y) CreateNewNode (x, y, POWER, OPERATION, diffTree)
-#define SIN_F(x) CreateNewNode (nullptr, x, SIN, OPERATION, diffTree)
-#define COS_F(x) CreateNewNode (nullptr, x, COS, OPERATION, diffTree)
-#define LOG_F(x,y) CreateNewNode (x, y, LOG, OPERATION, diffTree)
-#define LN_F(x) CreateNewNode (nullptr, x, LN, OPERATION, diffTree)
-#define LG_F(x) CreateNewNode (nullptr, x, LG, OPERATION, diffTree)
-#define SH_F(x) CreateNewNode (nullptr, x, SH, OPERATION, diffTree)
-#define CH_F(x) CreateNewNode (nullptr, x, CH, OPERATION, diffTree)
-#define TH_F(x) CreateNewNode (nullptr, x, TH, OPERATION, diffTree)
-#define CTH_F(x) CreateNewNode (nullptr, x, CTH, OPERATION, diffTree)
-#define SQRT_F(x) CreateNewNode (nullptr, x, SQRT, OPERATION, diffTree)
-#define NEW_CONST(x) CreateNewNode (nullptr, nullptr, x, CONSTANT, diffTree)
+#define POWER_F(x,y)          CreateNewNode (x, y, POWER, OPERATION, diffTree)
+#define SIN_F(x)              CreateNewNode (nullptr, x, SIN, OPERATION, diffTree)
+#define COS_F(x)              CreateNewNode (nullptr, x, COS, OPERATION, diffTree)
+#define LOG_F(x,y)            CreateNewNode (x, y, LOG, OPERATION, diffTree)
+#define LN_F(x)               CreateNewNode (nullptr, x, LN, OPERATION, diffTree)
+#define LG_F(x)               CreateNewNode (nullptr, x, LG, OPERATION, diffTree)
+#define SH_F(x)               CreateNewNode (nullptr, x, SH, OPERATION, diffTree)
+#define CH_F(x)               CreateNewNode (nullptr, x, CH, OPERATION, diffTree)
+#define TH_F(x)               CreateNewNode (nullptr, x, TH, OPERATION, diffTree)
+#define CTH_F(x)              CreateNewNode (nullptr, x, CTH, OPERATION, diffTree)
+#define SQRT_F(x)             CreateNewNode (nullptr, x, SQRT, OPERATION, diffTree)
+#define NEW_CONST(x)          CreateNewNode (nullptr, nullptr, x, CONSTANT, diffTree)
 
 
 MATH_OPERATION (ADD, '+', "+",
-{return ADD_F (dL, dR);},
-{LowerPriorityOperandPrint (current, "+"); break;},
-{return LC + RC;})
+    {
+        return ADD_F (dL, dR);
+    },
+    {
+        LowerPriorityOperandPrint (current, "+"); break;
+    },
+    {
+        return LC + RC;
+    }
+)
 
-MATH_OPERATION (SUBTRACTION,
-'-', "-", return SUBTRACTION_F (dL, dR);,
-LowerPriorityOperandPrint (current, "-"); break;,
-return LC - RC;)
+MATH_OPERATION (SUBTRACTION, '-', "-",
+    {
+        return SUBTRACTION_F (dL, dR);
+    },
+    {
+        LowerPriorityOperandPrint (current, "-"); break;
+    },
+    {
+        return LC - RC;
+    }
+)
 
 MATH_OPERATION (DIVISION, '/', "/",
-return DIVISION_F (SUBTRACTION_F (MULTIPLICATION_F (dL, R), MULTIPLICATION_F (L, dR)), POWER_F (R, NEW_CONST(2)));,
-DivisionPrint (current); break;,
-return LC/RC;)
+    {
+        return DIVISION_F (SUBTRACTION_F (MULTIPLICATION_F (R, dL), MULTIPLICATION_F (L, dR)), POWER_F (R, NEW_CONST(2)));
+    },
+    {
+        DivisionPrint (current); break;
+    },
+    {
+        return LC/RC;
+    }
+)
 
 MATH_OPERATION (MULTIPLICATION, '*', "*",
-return ADD_F(MULTIPLICATION_F (dL, R), MULTIPLICATION_F (L, dR));,
-MultiplicationPrint (current); break;,
-return LC * RC;)
+    {
+        return ADD_F(MULTIPLICATION_F (R, dL), MULTIPLICATION_F (L, dR));
+    },
+    {
+        MultiplicationPrint (current); break;
+    },
+    {
+        return LC * RC;
+    }
+)
 
 MATH_OPERATION (SIN, 's', "sin",
-return MULTIPLICATION_F (COS_F (R), dR);,
-OneOperandFunctionPrint (current, " \\sin "); break;,
-return sin(RC);)
+    {
+        return MULTIPLICATION_F (COS_F (R), dR);
+    },
+    {
+        OneOperandFunctionPrint (current, " \\sin "); break;
+    },
+    {
+        return sin(RC);
+    }
+)
 
 MATH_OPERATION (COS, 'c', "cos",
-return MULTIPLICATION_F (NEW_CONST(-1), MULTIPLICATION_F (SIN_F (R), dR));,
-OneOperandFunctionPrint (current, " \\cos "); break;,
-return cos(RC);)
+    {
+        return MULTIPLICATION_F (MULTIPLICATION_F (SIN_F (R), dR), NEW_CONST (-1));
+    },
+    {
+        OneOperandFunctionPrint (current, " \\cos "); break;
+    },
+    {
+        return cos(RC);
+    }
+)
 
 MATH_OPERATION (POWER, '^', "^",
-if (subRoot->leftChild->type == CONSTANT)
+    {
+        if (subRoot->leftChild->type == CONSTANT)
             {
                 if (subRoot->rightChild->type == CONSTANT)
                     return CreateNewNode (nullptr, nullptr, 0, CONSTANT, diffTree);
@@ -66,75 +109,174 @@ if (subRoot->leftChild->type == CONSTANT)
                 if (subRoot->rightChild->type == CONSTANT)
                     return MULTIPLICATION_F (NEW_CONST (subRoot->rightChild->memberValue), MULTIPLICATION_F (dL, POWER_F (L, NEW_CONST(subRoot->rightChild->memberValue - 1))));
 
-                return MULTIPLICATION_F (POWER_F (L, R), ADD_F (MULTIPLICATION_F (DIVISION_F(dL, L), R), MULTIPLICATION_F (LN_F (L), dR)));
-            },
-PowerPrint (current); break;,
-return pow(LC,RC);)
+                return MULTIPLICATION_F (POWER_F (L, R), ADD_F (MULTIPLICATION_F (DIVISION_F(dL, L), R),
+                                                                                  MULTIPLICATION_F (LN_F (L), dR)));
+            }
+    },
+    {
+        PowerPrint (current); break;
+    },
+    {
+        return pow (LC,RC);
+    }
+)
+
 
 MATH_OPERATION (LG, 'g', "lg",
-return DIVISION_F (DIVISION_F (dR, R), LN_F(NEW_CONST (10)));,
-OneOperandFunctionPrint (current, " \\lg "); break;,
-return log(RC)/log(10);)
+    {
+        return DIVISION_F (DIVISION_F (dR, R), LN_F(NEW_CONST (10)));
+    },
+    {
+        OneOperandFunctionPrint (current, " \\lg "); break;
+    },
+    {
+        return log(RC)/log(10);
+    }
+)
 
 MATH_OPERATION (LN, 'n', "ln",
-return DIVISION_F (dR, R);,
-OneOperandFunctionPrint (current, " \\ln "); break;,
-return log(RC);)
+    {
+        return DIVISION_F (R, dR);
+    },
+    {
+        OneOperandFunctionPrint (current, " \\ln "); break;
+    },
+    {
+        return log(RC);
+    }
+)
 
 MATH_OPERATION (TAN, 't', "tg",
-return DIVISION_F (dR, POWER_F (COS_F (R), NEW_CONST (2)));,
-OneOperandFunctionPrint (current, " \\tg "); break;,
-return tan(RC);)
+    {
+        return DIVISION_F (POWER_F (COS_F (R), NEW_CONST (2)), dR);
+    },
+    {
+        OneOperandFunctionPrint (current, " \\tg "); break;
+    },
+    {
+        return tan(RC);
+    }
+)
 
 MATH_OPERATION (CTAN, '1', "ctg",
-return DIVISION_F (dR, MULTIPLICATION_F (NEW_CONST (-1), POWER_F (SIN_F (R), NEW_CONST (2))));,
-OneOperandFunctionPrint (current, " \\ctg "); break;,
-return 1/tan(RC);)
+    {
+        return DIVISION_F (dR, MULTIPLICATION_F (POWER_F (SIN_F (R), NEW_CONST (2)), NEW_CONST (-1)));
+    },
+    {
+        OneOperandFunctionPrint (current, " \\ctg "); break;
+    },
+    {
+        return 1/tan(RC);
+    }
+)
 
 MATH_OPERATION (SH, 'h', "sh",
-return MULTIPLICATION_F (dR, CH_F (R));,
-OneOperandFunctionPrint (current, " \\sh "); break;,
-return (exp(RC) - exp(-RC))/2;)
+    {
+        return MULTIPLICATION_F (CH_F (R), dR);
+    },
+    {
+        OneOperandFunctionPrint (current, " \\sh "); break;
+    },
+    {
+        return (exp(RC) - exp(-RC))/2;
+    }
+)
 
 MATH_OPERATION (CH, 'u', "ch",
-return MULTIPLICATION_F (dR, SH_F (R));,
-OneOperandFunctionPrint (current, " \\ch "); break;,
-return (exp(-RC)+exp(RC))/2;)
+    {
+        return MULTIPLICATION_F (SH_F (R), dR);
+    },
+    {
+        OneOperandFunctionPrint (current, " \\ch "); break;
+    },
+    {
+        return (exp(-RC)+exp(RC))/2;
+    }
+)
 
 MATH_OPERATION (TH, '2', "th",
-return DIVISION_F (dR, POWER_F (CH_F (R), NEW_CONST(2)));,
-OneOperandFunctionPrint (current, " \\th "); break;,
-return ((exp(RC) - exp(-RC))/(exp(-RC)+exp(RC)));)
+    {
+        return DIVISION_F (dR, POWER_F (CH_F (R), NEW_CONST(2)));
+    },
+    {
+        OneOperandFunctionPrint (current, " \\th "); break;
+    },
+    {
+        return ((exp(RC) - exp(-RC))/(exp(-RC)+exp(RC)));
+    }
+)
 
 MATH_OPERATION (CTH, '3', "cth",
-return DIVISION_F (MULTIPLICATION_F (NEW_CONST (-1), dR), POWER_F (SH_F (R), NEW_CONST(2)));,
-OneOperandFunctionPrint (current, " \\cth "); break;,
-((exp(-RC) + exp(+RC))/(exp(RC)-exp(-RC)));)
+    {
+        return DIVISION_F (MULTIPLICATION_F (dR, NEW_CONST (-1)), POWER_F (SH_F (R), NEW_CONST(2)));
+    },
+    {
+        OneOperandFunctionPrint (current, " \\cth "); break;
+    },
+    {
+        ((exp(-RC) + exp(+RC))/(exp(RC)-exp(-RC)));
+    }
+)
 
 MATH_OPERATION (ARCSIN, '4', "arcsin",
-return DIVISION_F (dR, SQRT_F(SUBTRACTION_F(NEW_CONST(1), POWER_F (R , NEW_CONST(2)))));,
-OneOperandFunctionPrint (current, " \\arcsin "); break;,
-return asin (RC);)
+    {
+        return DIVISION_F (dR, SQRT_F(SUBTRACTION_F(NEW_CONST(1), POWER_F (R , NEW_CONST(2)))));
+    },
+    {
+        OneOperandFunctionPrint (current, " \\arcsin "); break;
+    },
+    {
+        return asin (RC);
+    }
+)
 
 MATH_OPERATION (ARCCOS, '5', "arccos",
-return MULTIPLICATION_F(NEW_CONST (-1), DIVISION_F (dR, SQRT_F(SUBTRACTION_F(NEW_CONST(1), POWER_F (R , NEW_CONST(2))))));,
-OneOperandFunctionPrint (current, " \\arccos "); break;,
-return acos (RC);)
+    {
+        return MULTIPLICATION_F(NEW_CONST (-1), DIVISION_F (dR, SQRT_F(SUBTRACTION_F(NEW_CONST(1), POWER_F (R , NEW_CONST(2))))));
+    },
+    {
+        OneOperandFunctionPrint (current, " \\arccos "); break;
+    },
+    {
+        return acos (RC);
+    }
+)
 
 MATH_OPERATION (ARCTG, '6', "arctg",
-return DIVISION_F (dR, ADD_F (NEW_CONST(1), POWER_F (R, NEW_CONST (2))));,
-OneOperandFunctionPrint (current, " \\arctg "); break;,
-return atan (RC);)
+    {
+    return DIVISION_F (dR, ADD_F (NEW_CONST(1), POWER_F (R, NEW_CONST (2))));
+    },
+    {
+    OneOperandFunctionPrint (current, " \\arctg "); break;
+    },
+    {
+    return atan (RC);
+    }
+)
 
 MATH_OPERATION (ARCCTG, '7', "arcctg",
-return MULTIPLICATION_F (NEW_CONST(-1), DIVISION_F (dR, ADD_F (NEW_CONST(1), POWER_F (R, NEW_CONST (2)))));,
-OneOperandFunctionPrint (current, " \\arcctg "); break;,
-return M_PI_2 - atan (RC);)
+    {
+        return MULTIPLICATION_F (NEW_CONST(-1), DIVISION_F (dR, ADD_F (NEW_CONST(1), POWER_F (R, NEW_CONST (2)))));
+    },
+    {
+        OneOperandFunctionPrint (current, " \\arcctg "); break;
+    },
+    {
+        return M_PI_2 - atan (RC);
+    }
+)
 
 MATH_OPERATION (SQRT, '8', "sqrt",
-return DIVISION_F (dR, MULTIPLICATION_F (NEW_CONST(2), SQRT_F (R)));,
-SqrtPrint (current); break;,
-return sqrt(RC);)
+    {
+        return DIVISION_F (dR, MULTIPLICATION_F (NEW_CONST(2), SQRT_F (R)));
+    },
+    {
+        SqrtPrint (current); break;
+    },
+    {
+        return sqrt(RC);
+    }
+)
 
 #undef L
 #undef R

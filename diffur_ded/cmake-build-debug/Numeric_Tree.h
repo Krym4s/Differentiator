@@ -52,7 +52,7 @@ struct NumericTree
     FILE* LaTeX_Output;
 };
 
-TreeError NumericTreeConstruct (NumericTree* thou, char* graph_logs, char* LaTeX_Output_name);
+TreeError NumericTreeConstruct (NumericTree* thou, char* graph_logs, char* LaTeX_Output_name, FILE* latexOutput);
 
 NumericNode* NumericNodeConstruct (NumericNode* thou, NumericNode* left, NumericNode* right, MemberValue value, NodeType Type, NumericTree* tree);
 
